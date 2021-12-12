@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import models.Role;
 import models.User;
 import services.UserService;
 
@@ -39,7 +40,7 @@ public class UserServlet extends HttpServlet {
         String myAction = request.getParameter("action");
         String editEmail = "";
 
-        Role role = new Role();
+        int userTypeInt = 0;
 
         UserService userService = new UserService();
 
@@ -54,13 +55,13 @@ public class UserServlet extends HttpServlet {
                     String userType = request.getParameter("add_user_type");
                     switch (userType) {
                         case "sys_admin":
-                            role.setRoleId(1);
+                            userTypeInt = 1;
                             break;
                         case "reg_user":
-                            role.setRoleId(2);
+                            userTypeInt = 2;
                             break;
                         case "comp_admin":
-                            role.setRoleId(3);
+                            userTypeInt = 3;
                             break;
                     }
                     // checks if input is valid
@@ -84,7 +85,7 @@ public class UserServlet extends HttpServlet {
 
                     if (valid) {
                         try {
-                            userService.insert(email, true, firstName, lastName, password, role);
+                            userService.insert(email, true, firstName, lastName, password, new Role(userTypeInt));
                         } catch (Exception ex) {
                             java.util.logging.Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -95,7 +96,7 @@ public class UserServlet extends HttpServlet {
                         request.setAttribute("add_first_name", firstName);
                         request.setAttribute("add_last_name", lastName);
                         request.setAttribute("add_password", password);
-                        request.setAttribute("add_user_type", role.getRoldId());
+                        request.setAttribute("add_user_type", userTypeInt);
                         request.setAttribute("addMessage", "Invalid Entry. Email must be valid, names must be at least two characters and contain valid characters. Password must contain valid characters.");
                     }
                 }
@@ -117,7 +118,7 @@ public class UserServlet extends HttpServlet {
                         request.setAttribute("edit_first_name", editUser.getFirstName());
                         request.setAttribute("edit_last_name", editUser.getLastName());
                         request.setAttribute("edit_password", editUser.getPassword());
-                        request.setAttribute("edit_user_type", editUser.getRole());
+                        request.setAttribute("edit_user_type", editUser.getRole().getRoleId());
                     } catch (Exception ex) {
                         java.util.logging.Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -176,7 +177,7 @@ public class UserServlet extends HttpServlet {
                         if (valid) {
                             try {
                                 session.invalidate();
-                                userService.update(editEmail, active, editFirstName, editLastName, editPassword, editRole);
+                                userService.update(editEmail, active, editFirstName, editLastName, editPassword, new Role(editRole));
                             } catch (Exception ex) {
                                 java.util.logging.Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
                         }

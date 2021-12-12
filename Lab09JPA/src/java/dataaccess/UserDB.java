@@ -21,7 +21,7 @@ public class UserDB {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
         try {
             User user = em.find(User.class, email);
-            return users;
+            return user;
         } finally {
             em.close();
         }

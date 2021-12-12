@@ -12,7 +12,7 @@ public class RoleDB {
             List<Role> roles = em.createNamedQuery("Role.findAll", Role.class).getResultList();
             return roles;
         } finally {
-            em.close;
+            em.close();
         }
     }
 }
